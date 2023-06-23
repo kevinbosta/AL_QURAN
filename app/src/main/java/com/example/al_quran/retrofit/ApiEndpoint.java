@@ -1,5 +1,6 @@
 package com.example.al_quran.retrofit;
 
+import com.example.al_quran.Models.AudioModel.Audio;
 import com.example.al_quran.Models.AyatModel.Verses;
 import com.example.al_quran.Models.SurahModel.Chapters;
 
@@ -13,4 +14,9 @@ public interface ApiEndpoint {
 
     @GET("quran/verses/uthmani")
     Call<Verses> getAyat(@Query("chapter_number") int id);
+
+    @GET ("chapter_recitations/33?")
+    Call<Audio> getAudio();
+
+
 }

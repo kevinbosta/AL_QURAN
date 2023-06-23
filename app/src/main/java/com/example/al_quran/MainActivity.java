@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.al_quran.Models.AudioModel.Audio;
+import com.example.al_quran.Models.AudioModel.AudioFilesItem;
 import com.example.al_quran.Models.SurahModel.Chapters;
 import com.example.al_quran.Models.SurahModel.ChaptersItem;
 import com.example.al_quran.retrofit.ApiService;
@@ -21,12 +23,16 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
 
-    private RecyclerView recyclerView;
-
+    private RecyclerView recyclerView, recyclerView1_;
     private MainAdapter mainAdapter;
+    private AudioAdapter audioAdapter;
+
+    private RecyclerView.LayoutManager layoutManager1, layoutManager2;
+
 
     private List<ChaptersItem> results = new ArrayList<>();
 
+    private List<AudioFilesItem> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,18 +41,42 @@ public class MainActivity extends AppCompatActivity {
         setUpView();
         setUpRecyclerView();
         getDataFromApi();
+        getDataFromApiAudio();
 
     }
+
+    private void getDataFromApiAudio() {
+        ApiService.endpoint().getAudio().enqueue(new Callback<Audio>() {
+            @Override
+            public void onResponse(Call<Audio> call, Response<Audio> response) {
+                List<AudioFilesItem> result = response.body().getAudioFiles();
+                audioAdapter.setData(result);
+            }
+
+            @Override
+            public void onFailure(Call<Audio> call, Throwable t) {
+
+            }
+        });
+    }
+
 
     private void setUpRecyclerView() {
         mainAdapter = new MainAdapter(results);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        layoutManager1 = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager1);
         recyclerView.setAdapter(mainAdapter);
+
+        audioAdapter = new AudioAdapter(list);
+        layoutManager2 = new LinearLayoutManager( this);
+        recyclerView1_.setLayoutManager(layoutManager2);
+        recyclerView1_.setAdapter(audioAdapter);
+
     }
 
     private void setUpView() {
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerViewAyat);
+        recyclerView1_ = findViewById(R.id.recyclerViewAudio);
     }
 
     private void getDataFromApi (){
